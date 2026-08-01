@@ -26,8 +26,7 @@
     
     .address-group { display: flex; gap: 8px; margin-bottom: 8px; }
     .btn-address { width: 120px; background-color: #4a5568; color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; flex-shrink: 0; }
-    .btn-address:hover { background-color: #2d3748; }
-
+    
     #addressLayer {
       display: none;
       position: relative;
@@ -63,90 +62,85 @@
     .day-badge { background: #ebf8ff; color: #2b6cb0; padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: bold; }
     
     .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .time-btn { padding: 12px 5px; background: white; border: 1px solid #cbd5e0; border-radius: 10px; text-align: center; font-size: 0.88rem; cursor: pointer; font-weight: 600; color: #2d3748; transition: all 0.2s; }
-    .time-btn.selected { background-color: #1a56db; color: white; border-color: #1a56db; font-weight: bold; box-shadow: 0 4px 10px rgba(26,86,219,0.3); }
+    .time-btn { padding: 12px 5px; background: white; border: 1px solid #cbd5e0; border-radius: 10px; text-align: center; font-size: 0.88rem; cursor: pointer; font-weight: 600; color: #2d3748; }
+    .time-btn.selected { background-color: #1a56db; color: white; border-color: #1a56db; font-weight: bold; }
     .time-btn.disabled { background-color: #edf2f7; color: #a0aec0; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
     
-    .btn-submit { width: 100%; background-color: #1a56db; color: white; border: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 14px rgba(26,86,219,0.3); transition: background 0.2s; }
-    .btn-submit:hover { background-color: #1545b5; }
+    .btn-submit { width: 100%; background-color: #1a56db; color: white; border: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 10px; }
     
     .contact-buttons { margin-top: 28px; border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center; }
-    .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; margin-top: 10px; border-radius: 12px; text-decoration: none; font-weight: bold; text-align: center; box-sizing: border-box; font-size: 0.98rem; }
+    .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; margin-top: 10px; border-radius: 12px; text-decoration: none; font-weight: bold; text-align: center; font-size: 0.98rem; }
     .btn-call { background-color: #22c55e; color: white; }
     .btn-kakao { background-color: #FEE500; color: #191919; }
 
-    /* 📢 이미지 팝업창 스타일 */
+    /* 📢 안내 레이아웃 카드 스타일 (엑박 방지형) */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      padding: 15px;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 15px;
     }
     .modal-content {
-      background: white;
-      padding: 20px 15px;
-      border-radius: 20px;
-      max-width: 440px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      background: white; padding: 20px 15px; border-radius: 20px; max-width: 440px; width: 100%; max-height: 90vh; overflow-y: auto;
     }
-    .modal-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #1a56db;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-    .modal-notice-box {
-      background: #ebf8ff;
-      border: 1px solid #bee3f8;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 0.85rem;
-      color: #2b6cb0;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    .popup-img {
-      width: 100%;
-      height: auto;
+    .modal-title { font-size: 1.15rem; font-weight: 800; color: #1a56db; text-align: center; margin-bottom: 12px; }
+    .modal-notice-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 10px; padding: 12px; font-size: 0.88rem; color: #2b6cb0; margin-bottom: 15px; line-height: 1.6; }
+    
+    /* 케어 11단계 안내 디자인 카드 */
+    .care-steps-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
-      display: block;
+      padding: 15px;
       margin-bottom: 15px;
     }
-    .btn-modal-close {
-      width: 100%;
-      background: #1a56db;
-      color: white;
-      border: none;
-      padding: 14px;
-      font-size: 1rem;
+    .care-steps-title {
       font-weight: bold;
-      border-radius: 12px;
-      cursor: pointer;
+      color: #1a56db;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .care-steps-list {
+      font-size: 0.85rem;
+      color: #4a5568;
+      padding-left: 18px;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    .btn-modal-close { width: 100%; background: #1a56db; color: white; border: none; padding: 14px; font-size: 1rem; font-weight: bold; border-radius: 12px; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <!-- 📢 11단계 이미지 안내 팝업창 -->
+  <!-- 안내 팝업창 -->
   <div id="noticeModal" class="modal-overlay">
     <div class="modal-content">
-      <div class="modal-title">📢 클린클린365 11단계 케어 안내</div>
+      <div class="modal-title">✨ 클린클린365 11단계 케어 안내</div>
       
       <div class="modal-notice-box">
         🎁 <strong>2대 이상 신청 시 각 5,000원 할인!</strong><br>
         ⚠️ 원활한 케어를 위해 방문 전 <strong>매트리스 상단 커버 및 이불을 정돈</strong>하여 매트리스만 보이도록 부탁드립니다.😊
       </div>
 
-      <!-- 저장소 독립형 이미지 (Care Image) -->
-      <img src="care.jpg" alt="11단계 매트리스 케어 서비스" class="popup-img" onerror="this.src='https://raw.githubusercontent.com/github/explore/main/topics/html/html.png'; this.alt='이미지 로딩 중...';">
+      <!-- 엑박이 발생하지 않는 11단계 서비스 안내 카드 -->
+      <div class="care-steps-card">
+        <div class="care-steps-title">🧪 11단계 프리미엄 케어 프로세스</div>
+        <ol class="care-steps-list">
+          <li>오염도 측정 및 현장 진단</li>
+          <li>프레임 청소 및 케어</li>
+          <li>매트리스 사이드 딥클리닝</li>
+          <li>매트리스 후면 건식 케어</li>
+          <li>매트리스 전면 건식 케어</li>
+          <li>강력 UV 살균 소독</li>
+          <li>진드기/패치 패브릭 케어</li>
+          <li>습식 오염/얼룩 집중 제거</li>
+          <li>피톤치드 연무 소독</li>
+          <li>공기청정 및 실내케어</li>
+          <li>최종 점검 및 관리 안내</li>
+        </ol>
+      </div>
 
       <button type="button" class="btn-modal-close" onclick="closeModal()">확인했습니다 👍</button>
     </div>
@@ -157,7 +151,6 @@
     <p class="subtitle">안녕하세요 클린클린365입니다.😊<br>아래 정보를 작성해 주시면 확인 후 빠르게 연락드리겠습니다!</p>
 
     <form id="careForm" onsubmit="handleSubmit(event)">
-      
       <div class="form-group">
         <label>👤 고객 성함</label>
         <input type="text" id="customerName" name="customer_name" placeholder="성함을 입력해 주세요" required>
@@ -286,9 +279,7 @@
       element_layer.style.display = 'block';
     }
 
-    const bookedSlots = {
-      "2026-08-01": ["오전 10:00", "오후 02:00"]
-    };
+    const bookedSlots = {};
 
     const weekdayTimes = ["오전 10:00", "오전 11:00", "오후 12:00", "오후 01:00", "오후 02:00", "오후 03:00", "오후 04:00", "오후 05:00", "오후 06:00", "오후 07:00", "오후 08:00"];
     const saturdayTimes = ["오전 10:00", "오전 11:00", "오후 12:00", "오후 01:00", "오후 02:00", "오후 03:00", "오후 04:00", "오후 05:00", "오후 06:00"];
@@ -379,7 +370,7 @@
       })
       .then(res => res.json())
       .then(data => {
-        alert('신청이 완료되었습니다! 구글 캘린더에 일정이 정상 등록되었습니다. 😊');
+        alert('신청이 완료되었습니다! 확인 후 빠르게 연락드리겠습니다. 😊');
         document.getElementById('careForm').reset();
         document.getElementById('timeSlotContainer').style.display = 'none';
         submitBtn.innerText = "신청서 제출하기";
@@ -397,4 +388,3 @@
 
 </body>
 </html>
-
