@@ -52,6 +52,20 @@
       font-weight: bold;
     }
 
+    /* 🛒 장바구니 관련 스타일 */
+    .cart-container { margin-top: 10px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #edf2f7; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .cart-item:last-child { margin-bottom: 0; }
+    .cart-item-info { font-size: 0.9rem; font-weight: 600; color: #2d3748; }
+    .cart-item-price { font-size: 0.85rem; color: #718096; font-weight: normal; margin-top: 2px; }
+    .cart-controls { display: flex; align-items: center; gap: 6px; }
+    .btn-qty { width: 26px; height: 26px; border: 1px solid #cbd5e0; background: white; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .qty-num { font-size: 0.9rem; font-weight: bold; width: 18px; text-align: center; }
+    .btn-del { border: none; background: #fff5f5; color: #e53e3e; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; margin-left: 4px; }
+    
+    .cart-total-box { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 2px dashed #e2e8f0; font-weight: 800; font-size: 1.05rem; }
+    .total-price { color: #1a56db; font-size: 1.2rem; }
+
     .checkbox-group label { font-weight: normal; display: flex; align-items: center; margin-bottom: 10px; font-size: 0.95rem; cursor: pointer; }
     .checkbox-group input { margin-right: 10px; width: 18px; height: 18px; accent-color: #1a56db; cursor: pointer; }
     
@@ -73,7 +87,7 @@
     .btn-call { background-color: #22c55e; color: white; }
     .btn-kakao { background-color: #FEE500; color: #191919; }
 
-    /* 📢 안내 팝업 및 웹 이미지 스타일 */
+    /* 팝업 스타일 */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 15px;
@@ -84,14 +98,7 @@
     .modal-title { font-size: 1.15rem; font-weight: 800; color: #1a56db; text-align: center; margin-bottom: 12px; }
     .modal-notice-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 10px; padding: 12px; font-size: 0.88rem; color: #2b6cb0; margin-bottom: 15px; line-height: 1.6; }
     
-    .care-image {
-      width: 100%;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      display: block;
-      object-fit: cover;
-    }
-
+    .care-image { width: 100%; border-radius: 12px; margin-bottom: 15px; display: block; object-fit: cover; }
     .btn-modal-close { width: 100%; background: #1a56db; color: white; border: none; padding: 14px; font-size: 1rem; font-weight: bold; border-radius: 12px; cursor: pointer; }
   </style>
 </head>
@@ -101,15 +108,10 @@
   <div id="noticeModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-title">✨ 클린클린365 11단계 케어 안내</div>
-      
       <div class="modal-notice-box">
-        🎁 <strong>2대 이상 신청 시 각 5,000원 할인!</strong><br>
         ⚠️ 원활한 케어를 위해 방문 전 <strong>매트리스 상단 커버 및 이불을 정돈</strong>하여 매트리스만 보이도록 부탁드립니다.😊
       </div>
-
-      <!-- 💡 엑박 방지: 안정적인 외부 웹 이미지 URL 로드 -->
       <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80" alt="클린클린365 11단계 케어 안내" class="care-image">
-
       <button type="button" class="btn-modal-close" onclick="closeModal()">확인했습니다 👍</button>
     </div>
   </div>
@@ -145,16 +147,25 @@
 
       <hr style="border: 0; border-top: 1px dashed #cbd5e0; margin: 25px 0;">
 
-      <!-- 수량 옵션 (할인 문구 제거 완료) -->
+      <!-- 🛒 1. 매트리스 선택 (장바구니 형태) -->
       <div class="form-group">
-        <label>1️⃣ 집에 매트리스가 몇 대 있나요?</label>
-        <select id="quantity" name="quantity" required>
-          <option value="">선택해 주세요</option>
-          <option value="1대">1대</option>
-          <option value="2대">2대</option>
-          <option value="3대">3대</option>
-          <option value="4대 이상">4대 이상</option>
+        <label>1️⃣ 케어할 매트리스 선택 (복수 선택 가능)</label>
+        <select id="mattressSelect" onchange="addCartItem()">
+          <option value="">-- 매트리스 사이즈를 선택해 주세요 --</option>
+          <option value="싱글/슈퍼싱글|30000">싱글 / 슈퍼싱글 (30,000원)</option>
+          <option value="퀸/더블|40000">퀸 / 더블 (40,000원)</option>
+          <option value="킹|50000">킹 (50,000원)</option>
+          <option value="라지킹|60000">라지킹 (60,000원)</option>
         </select>
+
+        <!-- 선택 목록 / 장바구니 레이아웃 -->
+        <div id="cartContainer" class="cart-container" style="display: none;">
+          <div id="cartList"></div>
+          <div class="cart-total-box">
+            <span>총 예상 결제 금액</span>
+            <span class="total-price" id="totalPrice">0원</span>
+          </div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -248,8 +259,83 @@
       element_layer.style.display = 'block';
     }
 
-    const bookedSlots = {};
+    /* 🛒 장바구니 로직 */
+    let cart = {};
 
+    function addCartItem() {
+      const select = document.getElementById('mattressSelect');
+      const val = select.value;
+      if(!val) return;
+
+      const [name, price] = val.split('|');
+      const priceNum = parseInt(price);
+
+      if (cart[name]) {
+        cart[name].qty += 1;
+      } else {
+        cart[name] = { price: priceNum, qty: 1 };
+      }
+
+      select.value = ""; // 드롭다운 초기화
+      renderCart();
+    }
+
+    function updateQty(name, delta) {
+      if (!cart[name]) return;
+      cart[name].qty += delta;
+      if (cart[name].qty <= 0) {
+        delete cart[name];
+      }
+      renderCart();
+    }
+
+    function removeItem(name) {
+      delete cart[name];
+      renderCart();
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cartContainer');
+      const list = document.getElementById('cartList');
+      const totalEl = document.getElementById('totalPrice');
+      
+      const keys = Object.keys(cart);
+
+      if(keys.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      list.innerHTML = '';
+      let totalSum = 0;
+
+      keys.forEach(name => {
+        const item = cart[name];
+        const itemTotal = item.price * item.qty;
+        totalSum += itemTotal;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div>
+            <div class="cart-item-info">${name}</div>
+            <div class="cart-item-price">${item.price.toLocaleString()}원 × ${item.qty}개 = <strong>${itemTotal.toLocaleString()}원</strong></div>
+          </div>
+          <div class="cart-controls">
+            <button type="button" class="btn-qty" onclick="updateQty('${name}', -1)">-</button>
+            <span class="qty-num">${item.qty}</span>
+            <button type="button" class="btn-qty" onclick="updateQty('${name}', 1)">+</button>
+            <button type="button" class="btn-del" onclick="removeItem('${name}')">삭제</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+
+      totalEl.innerText = totalSum.toLocaleString() + '원';
+    }
+
+    const bookedSlots = {};
     const weekdayTimes = ["오전 10:00", "오전 11:00", "오후 12:00", "오후 01:00", "오후 02:00", "오후 03:00", "오후 04:00", "오후 05:00", "오후 06:00", "오후 07:00", "오후 08:00"];
     const saturdayTimes = ["오전 10:00", "오전 11:00", "오후 12:00", "오후 01:00", "오후 02:00", "오후 03:00", "오후 04:00", "오후 05:00", "오후 06:00"];
 
@@ -305,8 +391,16 @@
 
     function handleSubmit(e) {
       e.preventDefault();
-      const timeVal = document.getElementById('selectedTime').value;
 
+      // 장바구니 검증
+      const keys = Object.keys(cart);
+      if (keys.length === 0) {
+        alert('케어받으실 매트리스를 최소 1개 이상 선택해 주세요!');
+        document.getElementById('mattressSelect').focus();
+        return;
+      }
+
+      const timeVal = document.getElementById('selectedTime').value;
       if (!timeVal) {
         alert('방문 희망 시간을 선택해 주세요!');
         return;
@@ -316,6 +410,16 @@
       submitBtn.innerText = "제출 중...";
       submitBtn.disabled = true;
 
+      // 매트리스 요약 텍스트 및 총액 계산
+      let mattressSummaryArr = [];
+      let totalAmount = 0;
+      keys.forEach(k => {
+        const itemSum = cart[k].price * cart[k].qty;
+        totalAmount += itemSum;
+        mattressSummaryArr.push(`${k} x ${cart[k].qty}대`);
+      });
+
+      const mattressSummary = mattressSummaryArr.join(', ') + ` (총 ${totalAmount.toLocaleString()}원)`;
       const conditions = Array.from(document.querySelectorAll('input[name="condition"]:checked')).map(cb => cb.value).join(', ');
       const fullAddress = document.getElementById('basicAddress').value + " " + document.getElementById('detailAddress').value;
 
@@ -323,7 +427,7 @@
         name: document.getElementById('customerName').value,
         phone: document.getElementById('customerPhone').value,
         address: fullAddress,
-        quantity: document.getElementById('quantity').value,
+        quantity: mattressSummary, // 전송 시 매트리스 상세/금액 정보 전달
         period: document.getElementById('period').value,
         experience: document.getElementById('experience').value,
         condition: conditions,
@@ -341,6 +445,8 @@
       .then(data => {
         alert('신청이 완료되었습니다! 확인 후 빠르게 연락드리겠습니다. 😊');
         document.getElementById('careForm').reset();
+        cart = {};
+        renderCart();
         document.getElementById('timeSlotContainer').style.display = 'none';
         submitBtn.innerText = "신청서 제출하기";
         submitBtn.disabled = false;
@@ -348,6 +454,8 @@
       .catch(err => {
         alert('신청서가 정상 제출되었습니다. 확인 후 빠르게 연락드리겠습니다! 😊');
         document.getElementById('careForm').reset();
+        cart = {};
+        renderCart();
         document.getElementById('timeSlotContainer').style.display = 'none';
         submitBtn.innerText = "신청서 제출하기";
         submitBtn.disabled = false;
@@ -357,3 +465,4 @@
 
 </body>
 </html>
+
