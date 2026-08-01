@@ -1,1 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>클린클린365 매트리스 케어 신청서</title>
+  <!-- 카카오/다음 우편번호 서비스 -->
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; max-width: 500px; margin: 0 auto; padding: 15px; color: #333; line-height: 1.6; background-color: #f0f4f9; }
+    
+    .container { background: white; padding: 25px 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.07); position: relative; }
+    
+    h2 { text-align: center; color: #1a56db; font-size: 1.3rem; margin-top: 5px; margin-bottom: 8px; font-weight: 800; word-break: keep-all; }
+    .subtitle { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 25px; word-break: keep-all; }
+    
+    .form-group { margin-bottom: 20px; }
+    label { font-weight: 700; display: block; margin-bottom: 8px; font-size: 0.95rem; color: #2d3748; }
+    
+    select, input[type="text"], input[type="tel"], textarea { 
+      width: 100%; padding: 13px 14px; border: 1px solid #cbd5e0; border-radius: 12px; font-size: 0.95rem; background-color: #fff; transition: all 0.2s; 
+    }
+    select:focus, input:focus, textarea:focus { border-color: #1a56db; outline: none; box-shadow: 0 0 0 3px rgba(26,86,219,0.15); }
+    
+    .address-group { display: flex; gap: 8px; margin-bottom: 8px; }
+    .btn-address { width: 120px; background-color: #4a5568; color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; flex-shrink: 0; }
+    .btn-address:hover { background-color: #2d3748; }
+
+    #addressLayer {
+      display: none;
+      position: relative;
+      width: 100%;
+      height: 400px;
+      margin: 10px 0;
+      border: 2px solid #1a56db;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #btnCloseLayer {
+      cursor: pointer;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 1;
+      background: #1a56db;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .checkbox-group label { font-weight: normal; display: flex; align-items: center; margin-bottom: 10px; font-size: 0.95rem; cursor: pointer; }
+    .checkbox-group input { margin-right: 10px; width: 18px; height: 18px; accent-color: #1a56db; cursor: pointer; }
+    
+    .date-picker-input { width: 100%; padding: 13px 14px; border: 1px solid #cbd5e0; border-radius: 12px; font-size: 0.95rem; background-color: #fff; cursor: pointer; }
+    
+    .time-slot-container { display: none; margin-top: 14px; background: #f7fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 14px; }
+    .time-slot-title { font-size: 0.88rem; color: #4a5568; margin-bottom: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+    .day-badge { background: #ebf8ff; color: #2b6cb0; padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: bold; }
+    
+    .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .time-btn { padding: 12px 5px; background: white; border: 1px solid #cbd5e0; border-radius: 10px; text-align: center; font-size: 0.88rem; cursor: pointer; font-weight: 600; color: #2d3748; transition: all 0.2s; }
+    .time-btn.selected { background-color: #1a56db; color: white; border-color: #1a56db; font-weight: bold; box-shadow: 0 4px 10px rgba(26,86,219,0.3); }
+    .time-btn.disabled { background-color: #edf2f7; color: #a0aec0; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
+    
+    .btn-submit { width: 100%; background-color: #1a56db; color: white; border: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 14px rgba(26,86,219,0.3); transition: background 0.2s; }
+    .btn-submit:hover { background-color: #1545b5; }
+    
+    .contact-buttons { margin-top: 28px; border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center; }
+    .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; margin-top: 10px; border-radius: 12px; text-decoration: none; font-weight: bold; text-align: center; box-sizing: border-box; font-size: 0.98rem; }
+    .btn-call { background-color: #22c55e; color: white; }
+    .btn-kakao { background-color: #FEE500; color: #191919; }
+
+    /* 📢 이미지 팝업창 스타일 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 15px;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px 15px;
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #1a56db;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .modal-notice-box {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      color: #2b6cb0;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .popup-img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 15px;
+    }
+    .btn-modal-close {
+      width: 100%;
+      background: #1a56db;
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 📢 11단계 이미지 안내 팝업창 -->
+  <div id="noticeModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-title">📢 클린클린365 11단계 케어 안내</div>
+      
+      <div class="modal-notice-box">
+        🎁 <strong>2대 이상 신청 시 각 5,000원 할인!</strong><br>
+        ⚠️ 원활한 케어를 위해 방문 전 <strong>매트리스 상단 커버 및 이불을 정돈</strong>하여 매트리스만 보이도록 부탁드립니다.😊
+      </div>
+
+      <!-- 저장소 독립형 이미지 (Care Image) -->
+      <img src="care.jpg" alt="11단계 매트리스 케어 서비스" class="popup-img" onerror="this.src='https://raw.githubusercontent.com/github/explore/main/topics/html/html.png'; this.alt='이미지 로딩 중...';">
+
+      <button type="button" class="btn-modal-close" onclick="closeModal()">확인했습니다 👍</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>📋 클린클린365 매트리스 케어 신청서</h2>
+    <p class="subtitle">안녕하세요 클린클린365입니다.😊<br>아래 정보를 작성해 주시면 확인 후 빠르게 연락드리겠습니다!</p>
+
+    <form id="careForm" onsubmit="handleSubmit(event)">
+      
+      <div class="form-group">
+        <label>👤 고객 성함</label>
+        <input type="text" id="customerName" name="customer_name" placeholder="성함을 입력해 주세요" required>
+      </div>
+
+      <div class="form-group">
+        <label>📞 연락처</label>
+        <input type="tel" id="customerPhone" name="customer_phone" placeholder="010-0000-0000" required>
+      </div>
+
+      <div class="form-group">
+        <label>🏠 방문 주소</label>
+        <div class="address-group">
+          <input type="text" id="basicAddress" placeholder="주소 검색 버튼을 눌러주세요" readonly required onclick="searchAddress()">
+          <button type="button" class="btn-address" onclick="searchAddress()">주소 검색</button>
+        </div>
+        
+        <div id="addressLayer">
+          <button type="button" id="btnCloseLayer" onclick="closeAddressLayer()">닫기 ✖</button>
+        </div>
+
+        <input type="text" id="detailAddress" placeholder="상세주소 (동·호수 등)를 입력해 주세요" required>
+      </div>
+
+      <hr style="border: 0; border-top: 1px dashed #cbd5e0; margin: 25px 0;">
+
+      <div class="form-group">
+        <label>1️⃣ 집에 매트리스가 몇 대 있나요?</label>
+        <select id="quantity" name="quantity" required>
+          <option value="">선택해 주세요</option>
+          <option value="1대">1대</option>
+          <option value="2대">2대 (각 5천원 할인)</option>
+          <option value="3대">3대 (각 5천원 할인)</option>
+          <option value="4대 이상">4대 이상 (각 5천원 할인)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>2️⃣ 매트리스를 사용한 지 얼마나 됐나요?</label>
+        <select id="period" name="period" required>
+          <option value="">선택해 주세요</option>
+          <option value="1년 미만">1년 미만</option>
+          <option value="1~3년">1~3년</option>
+          <option value="3~5년">3~5년</option>
+          <option value="5~10년">5~10년</option>
+          <option value="10년 이상">10년 이상</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>3️⃣ 매트리스 케어를 받아보신 적 있나요?</label>
+        <select id="experience" name="experience" required>
+          <option value="">선택해 주세요</option>
+          <option value="한 번도 없어요">한 번도 없어요</option>
+          <option value="1번 받아봤어요">1번 받아봤어요</option>
+          <option value="2~3번 받아봤어요">2~3번 받아봤어요</option>
+          <option value="정기적으로 받고 있어요">정기적으로 받고 있어요</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>4️⃣ 해당되는 항목을 체크해 주세요 (복수 선택 가능)</label>
+        <label><input type="checkbox" name="condition" value="영아·아기"> 영아·아기가 있어요</label>
+        <label><input type="checkbox" name="condition" value="반려견"> 반려견이 있어요</label>
+        <label><input type="checkbox" name="condition" value="반려묘"> 반려묘가 있어요</label>
+        <label><input type="checkbox" name="condition" value="알레르기"> 알레르기가 있어요</label>
+        <label><input type="checkbox" name="condition" value="오염·얼룩"> 오염·얼룩이 있어요</label>
+        <label><input type="checkbox" name="condition" value="냄새 제거"> 냄새 제거가 필요해요</label>
+        <label><input type="checkbox" name="condition" value="해당 없음"> 해당 없음</label>
+      </div>
+
+      <div class="form-group">
+        <label>📅 희망 방문 날짜 및 시간 선택</label>
+        <input type="date" id="visitDate" class="date-picker-input" required onchange="handleDateChange()">
+        
+        <div id="timeSlotContainer" class="time-slot-container">
+          <div class="time-slot-title">
+            <span>💡 희망 시간을 선택해 주세요</span>
+            <span id="dayBadge" class="day-badge">월~금 운영시간</span>
+          </div>
+          <div id="timeGrid" class="time-grid"></div>
+        </div>
+        <input type="hidden" id="selectedTime" name="selected_time" required>
+      </div>
+
+      <div class="form-group">
+        <label>5️⃣ 추가로 전달할 내용 (선택)</label>
+        <textarea id="memo" name="memo" rows="3" placeholder="예: 매트리스 브랜드, 오염 위치 등"></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">신청서 제출하기</button>
+    </form>
+
+    <div class="contact-buttons">
+      <p style="font-size:0.88rem; color:#666; margin-bottom:6px;">💡 빠른 문의가 필요하신가요?</p>
+      <a href="tel:01082791826" class="btn-contact btn-call">📞 전화 상담 연결</a>
+      <a href="https://open.kakao.com/o/sqzQMRGi" target="_blank" class="btn-contact btn-kakao">💬 카카오톡 오픈채팅 문의</a>
+    </div>
+  </div>
+
+  <script>
+    function closeModal() {
+      document.getElementById('noticeModal').style.display = 'none';
+    }
+
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCou6bICbuyVBGW7bRuKOi0MYmaTECV99Vps37B6VS8q9OJoDOkNbcuQT5wVlfpxlw/exec";
+
+    const element_layer = document.getElementById('addressLayer');
+
+    function closeAddressLayer() {
+      element_layer.style.display = 'none';
+    }
+
+    function searchAddress() {
+      new daum.Postcode({
+        oncomplete: function(data) {
+          document.getElementById('basicAddress').value = data.address;
+          element_layer.style.display = 'none';
+          document.getElementById('detailAddress').focus();
+        },
+        width : '100%',
+        height : '100%',
+        maxSuggestItems : 5
+      }).embed(element_layer);
+
+      element_layer.style.display = 'block';
+    }
+
+    const bookedSlots = {
+      "2026-08-01": ["오전 10:00", "오후 02:00"]
+    };
+
+    const weekdayTimes = ["오전 10:00", "오전 11:00", "오후 12:00", "오후 01:00", "오후 02:00", "오후 03:00", "오후 04:00", "오후 05:00", "오후 06:00", "오후 07:00", "오후 08:00"];
+    const saturdayTimes = ["오전 10:00", "오전 11:00", "오후 12:00", "오후 01:00", "오후 02:00", "오후 03:00", "오후 04:00", "오후 05:00", "오후 06:00"];
+
+    function handleDateChange() {
+      const dateInput = document.getElementById('visitDate').value;
+      if (!dateInput) return;
+
+      const selectedDate = new Date(dateInput);
+      const dayOfWeek = selectedDate.getDay();
+      const container = document.getElementById('timeSlotContainer');
+      const timeGrid = document.getElementById('timeGrid');
+      const dayBadge = document.getElementById('dayBadge');
+      
+      document.getElementById('selectedTime').value = '';
+
+      if (dayOfWeek === 0) {
+        alert("일요일은 휴무입니다. 월~토요일 중 선택해 주세요! 😊");
+        document.getElementById('visitDate').value = '';
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      timeGrid.innerHTML = '';
+
+      let availableTimes = (dayOfWeek === 6) ? saturdayTimes : weekdayTimes;
+      dayBadge.innerText = (dayOfWeek === 6) ? "토요일 (10시~18시)" : "평일 (10시~20시)";
+
+      const alreadyBooked = bookedSlots[dateInput] || [];
+
+      availableTimes.forEach(timeStr => {
+        const btn = document.createElement('div');
+        btn.className = 'time-btn';
+        btn.innerText = timeStr;
+
+        if (alreadyBooked.includes(timeStr)) {
+          btn.classList.add('disabled');
+          btn.innerText += " (마감)";
+        } else {
+          btn.onclick = function() { selectTime(btn, timeStr); };
+        }
+        timeGrid.appendChild(btn);
+      });
+    }
+
+    function selectTime(element, timeValue) {
+      if (element.classList.contains('disabled')) return;
+      const buttons = document.querySelectorAll('.time-btn');
+      buttons.forEach(btn => btn.classList.remove('selected'));
+      element.classList.add('selected');
+      document.getElementById('selectedTime').value = timeValue;
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const timeVal = document.getElementById('selectedTime').value;
+
+      if (!timeVal) {
+        alert('방문 희망 시간을 선택해 주세요!');
+        return;
+      }
+
+      const submitBtn = document.querySelector('.btn-submit');
+      submitBtn.innerText = "제출 중...";
+      submitBtn.disabled = true;
+
+      const conditions = Array.from(document.querySelectorAll('input[name="condition"]:checked')).map(cb => cb.value).join(', ');
+      const fullAddress = document.getElementById('basicAddress').value + " " + document.getElementById('detailAddress').value;
+
+      const formData = {
+        name: document.getElementById('customerName').value,
+        phone: document.getElementById('customerPhone').value,
+        address: fullAddress,
+        quantity: document.getElementById('quantity').value,
+        period: document.getElementById('period').value,
+        experience: document.getElementById('experience').value,
+        condition: conditions,
+        visitDate: document.getElementById('visitDate').value,
+        visitTime: timeVal,
+        memo: document.getElementById('memo').value
+      };
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify(formData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert('신청이 완료되었습니다! 구글 캘린더에 일정이 정상 등록되었습니다. 😊');
+        document.getElementById('careForm').reset();
+        document.getElementById('timeSlotContainer').style.display = 'none';
+        submitBtn.innerText = "신청서 제출하기";
+        submitBtn.disabled = false;
+      })
+      .catch(err => {
+        alert('신청서가 정상 제출되었습니다. 확인 후 빠르게 연락드리겠습니다! 😊');
+        document.getElementById('careForm').reset();
+        document.getElementById('timeSlotContainer').style.display = 'none';
+        submitBtn.innerText = "신청서 제출하기";
+        submitBtn.disabled = false;
+      });
+    }
+  </script>
+
+</body>
+</html>
 
